@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Roboto } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/shared/Header";
-import Footer from "@/components/shared/Footer";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const roboto = Roboto({
   variable: "--font-roboto",
@@ -30,11 +29,9 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${roboto.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Header />
-        <main className="wrapper">{children}</main>
-        <Footer />
-      </body>
+      <ClerkProvider>
+        <body>{children}</body>
+      </ClerkProvider>
     </html>
   );
 }

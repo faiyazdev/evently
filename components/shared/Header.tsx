@@ -1,4 +1,6 @@
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 
 function Header() {
   return (
@@ -16,12 +18,19 @@ function Header() {
 
       {/* Actions */}
       <div>
-        <button
-          type="button"
-          className="rounded-md bg-black px-4 py-2 text-white transition hover:bg-gray-800"
-        >
-          Sign In
-        </button>
+        <Show when="signed-out">
+          <SignInButton mode="redirect">
+            <Link
+              href={"/sign-in"}
+              className="rounded-md bg-black px-4 py-2 text-white transition hover:bg-gray-800"
+            >
+              Sign In
+            </Link>
+          </SignInButton>
+        </Show>
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
       </div>
     </header>
   );
