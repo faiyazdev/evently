@@ -11,7 +11,7 @@ const NavItems = () => {
         const isActive = pathName === route;
         return (
           <li
-            className={`${isActive ? "text-blue-500" : "text-black"} p-medium-16 uppercase font-roboto`}
+            className={`${isActive && "text-blue-500"} p-medium-16 uppercase font-roboto`}
             key={label}
           >
             <Link href={route}>{label}</Link>

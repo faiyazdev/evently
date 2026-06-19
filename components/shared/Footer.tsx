@@ -1,8 +1,8 @@
 function Footer() {
   return (
-    <footer className="border-t py-6">
-      <div className="wrapper flex flex-col items-center justify-between gap-4 md:flex-row">
-        <p className="p-regular-14 text-gray-700">
+    <footer className="border-t  wrapper text-foreground-100">
+      <div className=" py-6 flex flex-col items-center justify-between  md:flex-row">
+        <p className="p-regular-14 ">
           © {new Date().getFullYear()} Evently. All rights reserved.
         </p>
 
@@ -11,7 +11,7 @@ function Footer() {
             <li>
               <a
                 href="#"
-                className="p-medium-14 text-gray-700 hover:text-black transition-colors"
+                className="p-medium-14  hover:text-black transition-colors"
               >
                 Privacy
               </a>
@@ -19,7 +19,7 @@ function Footer() {
             <li>
               <a
                 href="#"
-                className="p-medium-14 text-gray-700 hover:text-black transition-colors"
+                className="p-medium-14  hover:text-black transition-colors"
               >
                 Terms
               </a>
@@ -27,7 +27,7 @@ function Footer() {
             <li>
               <a
                 href="#"
-                className="p-medium-14 text-gray-700 hover:text-black transition-colors"
+                className="p-medium-14  hover:text-black transition-colors"
               >
                 Contact
               </a>
