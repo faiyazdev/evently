@@ -3,27 +3,38 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { connectToDatabase } from "../db";
 import Event from "../db/models/event.model";
 import User from "../db/models/user.model";
-import type { CreateUserParams } from "@/types";
+import type { CreateUserParams, UpdateUserParams } from "@/types";
 
-export const upsertUser = async (user: CreateUserParams) => {
+export const createUser = async (user: CreateUserParams) => {
+  try {
+    await connectToDatabase();
+
+    const newUser = await User.create(user);
+    return newUser.toObject();
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
+export const updateUser = async (clerkId: string, user: UpdateUserParams) => {
   try {
     await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate(
-      { clerkId: user.clerkId },
+      { clerkId },
       { $set: user },
       {
-        new: true,
-        upsert: true,
+        returnDocument: "after",
       },
     );
 
     return updatedUser;
   } catch (error) {
-    console.error("Error upserting user:", error);
+    console.error("Error updating user:", error);
     throw error;
   }
 };
+
 export const getUserById = async (userId: string) => {
   try {
     await connectToDatabase();

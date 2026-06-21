@@ -14,7 +14,7 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true }, // Fixed typo: uniqe -> unique
   username: { type: String, required: true, unique: true }, // Fixed typo: uniqe -> unique
   firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  lastName: String,
   photo: { type: String, required: true },
 });
 
