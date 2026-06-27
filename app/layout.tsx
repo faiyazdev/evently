@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${roboto.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${roboto.variable} h-full antialiased dark`}
     >
       <ClerkProvider>
         <body>{children}</body>

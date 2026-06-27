@@ -11,10 +11,19 @@ const NavItems = () => {
         const isActive = pathName === route;
         return (
           <li
-            className={`${isActive && "text-blue-500"} p-medium-16 uppercase font-roboto`}
+            className={`
+              p-medium-16 uppercase font-sans transition-colors
+              ${
+                isActive
+                  ? "text-primary font-bold"
+                  : "text-foreground hover:text-foreground"
+              }
+            `}
             key={label}
           >
-            <Link href={route}>{label}</Link>
+            <Link href={route} className="block">
+              {label}
+            </Link>
           </li>
         );
       })}
