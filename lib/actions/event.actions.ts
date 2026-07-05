@@ -51,8 +51,13 @@ export const updateEvent = async ({
 export const getEvents = async () => {
   try {
     await connectToDatabase();
-    const events = await Event.find().lean();
-    return events;
+    const events = await Event.find()
+      .populate<{ organizer: UserType }>("organizer")
+      .populate<{ category: CategoryType }>("category")
+      .lean();
+
+    if (!events) return [];
+    return events.map((event) => toEventDto(event));
   } catch (error) {
     console.error("Error fetching events:", error);
     throw error;

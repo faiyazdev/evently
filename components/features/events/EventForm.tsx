@@ -38,7 +38,7 @@ import { DatePicker } from "@/components/shared/DatePicker";
 type EventFormProps = {
   userId: string;
   type: "create" | "update";
-  categories: { _id: string; name: string }[];
+  categories: { _id: string; name: string }[] | null;
   event?: EventDto;
 };
 
@@ -48,7 +48,7 @@ export default function EventForm({
   categories: initialCategories,
   event,
 }: EventFormProps) {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState(initialCategories || []);
   const { reset, control, handleSubmit, setValue } = useForm<
     z.infer<typeof eventSchema>
   >({

@@ -4,13 +4,13 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 
-export const roboto = Roboto({
+const roboto = Roboto({
   variable: "--font-roboto",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
 });
 
-export const dmSans = DM_Sans({
+const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
 });
