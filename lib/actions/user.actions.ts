@@ -1,6 +1,6 @@
 "use server";
 import { clerkClient } from "@clerk/nextjs/server";
-import { connectToDatabase } from "../db";
+import connectToDatabase from "../db";
 import Event from "../db/models/event.model";
 import User from "../db/models/user.model";
 import type { CreateUserParams, UpdateUserParams } from "@/types";

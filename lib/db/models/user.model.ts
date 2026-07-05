@@ -1,4 +1,10 @@
-import mongoose, { models, Schema, Document, Model } from "mongoose";
+import mongoose, {
+  models,
+  Schema,
+  Document,
+  Model,
+  InferSchemaType,
+} from "mongoose";
 
 export interface IUser extends Document {
   clerkId: string;
@@ -20,5 +26,6 @@ const UserSchema = new Schema<IUser>({
 
 const User: Model<IUser> =
   models.User || mongoose.model<IUser>("User", UserSchema);
+export type UserType = InferSchemaType<typeof UserSchema>;
 
 export default User;

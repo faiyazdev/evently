@@ -1,4 +1,13 @@
-import { Document, Schema, model, models, Types } from "mongoose";
+import mongoose, {
+  Document,
+  Schema,
+  model,
+  models,
+  Types,
+  InferSchemaType,
+} from "mongoose";
+import { UserType } from "./user.model";
+import { CategoryType } from "./category.model";
 
 export interface IEvent extends Document {
   title: string;
@@ -68,6 +77,14 @@ const EventSchema = new Schema<IEvent>(
   },
 );
 
-const Event = models.Event || model<IEvent>("Event", EventSchema);
-
+const Event: mongoose.Model<IEvent> =
+  models.Event || model<IEvent>("Event", EventSchema);
+export type EventType = InferSchemaType<typeof EventSchema>;
+export type EventTypeWithRelations = Omit<
+  EventType,
+  "organizer" | "category"
+> & {
+  organizer: UserType;
+  category: CategoryType;
+};
 export default Event;

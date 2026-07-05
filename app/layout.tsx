@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Roboto } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 
 export const roboto = Roboto({
   variable: "--font-roboto",
@@ -30,7 +31,10 @@ export default function RootLayout({
       className={`${dmSans.variable} ${roboto.variable} h-full antialiased dark`}
     >
       <ClerkProvider>
-        <body>{children}</body>
+        <body>
+          <main>{children}</main>
+          <Toaster />
+        </body>
       </ClerkProvider>
     </html>
   );

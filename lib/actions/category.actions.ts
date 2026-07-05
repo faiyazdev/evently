@@ -1,12 +1,13 @@
 "use server";
 
 import { CreateCategoryParams } from "@/types";
-import Category from "../db/models/category.model";
 import connectToDatabase from "../db";
+import { CategoryDto, toCategoryDto } from "../dto/category.dto";
+import Category from "../db/models/category.model";
 
 export const createCategory = async ({
   categoryName,
-}: CreateCategoryParams) => {
+}: CreateCategoryParams): Promise<CategoryDto> => {
   try {
     await connectToDatabase();
     const newCategory = await Category.create({ name: categoryName });
@@ -17,13 +18,15 @@ export const createCategory = async ({
   }
 };
 
-export const getCategories = async () => {
+export const getCategories = async (): Promise<CategoryDto[] | null> => {
   try {
     await connectToDatabase();
+
     const categories = await Category.find().lean();
-    return categories;
+    if (!categories) return null;
+    return categories.map(toCategoryDto);
   } catch (error) {
-    console.error("Error creating Category:", error);
+    console.error("Error fetching Categories:", error);
     throw error;
   }
 };
