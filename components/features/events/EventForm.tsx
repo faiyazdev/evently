@@ -68,7 +68,7 @@ export default function EventForm({
       isFree: event?.isFree || false,
       url: event?.url || "",
       categoryId: event?.category._id || "",
-      organizer: event?.organizer._id || userId,
+      organizer: event?.organizer?._id || userId,
     },
   });
 
