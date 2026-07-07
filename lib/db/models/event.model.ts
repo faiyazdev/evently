@@ -8,6 +8,7 @@ import mongoose, {
 } from "mongoose";
 import { UserType } from "./user.model";
 import { CategoryType } from "./category.model";
+import "@/lib/db/models/category.model";
 
 export interface IEvent extends Document {
   title: string;
