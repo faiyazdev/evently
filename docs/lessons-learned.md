@@ -10,7 +10,6 @@ Mongoose only knows about models whose files have actually run — just creating
 
 **What I learned**
 - Why `MissingSchemaError` happens
-- Why `import type` doesn't register a model
 - How registration affects `populate()`
 - Two fixes: import related models directly, or use a central `models/index.ts` for bigger projects
 
