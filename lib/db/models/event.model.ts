@@ -85,7 +85,7 @@ export type EventTypeWithRelations = Omit<
   EventType,
   "organizer" | "category"
 > & {
-  organizer: UserType;
+  organizer?: UserType;
   category: CategoryType;
 };
 export default Event;

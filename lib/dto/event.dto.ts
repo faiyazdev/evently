@@ -14,7 +14,7 @@ export type EventDto = {
   isFree: boolean;
   url?: string;
   category: CategoryDto;
-  organizer: UserDto;
+  organizer?: UserDto;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -35,12 +35,14 @@ export function toEventDto(Event: EventTypeWithRelations): EventDto {
       _id: Event.category._id.toString(),
       name: Event.category.name,
     },
-    organizer: {
-      _id: Event.organizer._id.toString(),
-      firstName: Event.organizer.firstName,
-      lastName: Event.organizer.lastName,
-      email: Event.organizer.email,
-    },
+    organizer: Event.organizer
+      ? {
+          _id: Event.organizer._id.toString(),
+          firstName: Event.organizer.firstName,
+          lastName: Event.organizer.lastName,
+          email: Event.organizer.email,
+        }
+      : undefined,
     createdAt: Event.createdAt,
     updatedAt: Event.updatedAt,
   };
