@@ -62,9 +62,9 @@ export async function deleteUser(clerkId: string) {
     // Unlink relationships
     await Event.updateMany(
       {
-        organaizor: userToDelete._id,
+        organizer: userToDelete._id,
       },
-      { $unset: { organizor: 1 } },
+      { $unset: { organizer: 1 } },
     );
 
     // Delete user
