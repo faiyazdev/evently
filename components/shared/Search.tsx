@@ -1,14 +1,15 @@
 "use client";
 import { ChangeEvent } from "react";
 import { Input } from "../ui/input";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Search = ({ placeholder = "title ....." }: { placeholder?: string }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams.toString());
     const url = new URL(window.location.href);
     if (e.target.value) {
       params.set("query", e.target.value);
