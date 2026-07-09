@@ -4,8 +4,9 @@ import { CreateEventParams, UpdateEventParams } from "@/types";
 import connectToDatabase from "../db";
 import User, { UserType } from "../db/models/user.model";
 import { EventDto, toEventDto } from "../dto/event.dto";
-import Event, { IEvent } from "../db/models/event.model";
-import { CategoryType } from "../db/models/category.model";
+import Event, { EventType, IEvent } from "../db/models/event.model";
+import Category, { CategoryType } from "../db/models/category.model";
+import { QueryFilter } from "mongoose";
 
 export const createEvent = async ({
   userId,
@@ -48,21 +49,65 @@ export const updateEvent = async ({
   }
 };
 
-export const getEvents = async () => {
-  try {
-    await connectToDatabase();
-    const events = await Event.find()
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: "i" } });
+};
+
+export const getEvents = async ({
+  limit = 6,
+  page,
+  query,
+  category,
+}: {
+  limit?: number;
+  page: number;
+  query?: string;
+  category?: string;
+}) => {
+  await connectToDatabase();
+
+  const categoryDoc = category ? await getCategoryByName(category) : null;
+
+  if (category && !categoryDoc) {
+    return {
+      data: [],
+      totalPages: 0,
+    };
+  }
+
+  const filter: QueryFilter<EventType> = {};
+
+  if (query) {
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    filter.title = {
+      $regex: escaped,
+      $options: "i",
+    };
+  }
+
+  if (categoryDoc) {
+    filter.category = categoryDoc._id;
+  }
+
+  const [events, total] = await Promise.all([
+    Event.find(filter)
       .populate<{ organizer: UserType }>("organizer")
       .populate<{ category: CategoryType }>("category")
-      .lean();
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
 
-    if (!events) return [];
-    return events.map((event) => toEventDto(event));
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    throw error;
-  }
+    Event.countDocuments(filter),
+  ]);
+
+  return {
+    data: events.map(toEventDto),
+    totalPages: Math.ceil(total / limit),
+  };
 };
+
 export const getEventById = async (id: string): Promise<EventDto | null> => {
   try {
     await connectToDatabase();

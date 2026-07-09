@@ -1,10 +1,26 @@
+import CategoryFilter from "@/components/features/categories/CategoryFilter";
+import EventCollection from "@/components/features/events/EventCollection";
+import Search from "@/components/shared/Search";
 import { Button } from "@/components/ui/button";
+import { getCategories } from "@/lib/actions/category.actions";
 import { getEvents } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function Home() {
-  const events = await getEvents();
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { page = 1, query = "", category = "" } = await searchParams;
+  const { data, totalPages } = await getEvents({
+    page: Number(page),
+    query: query as string,
+    category: category as string,
+  });
+
+  const categories = await getCategories();
+
   return (
     <>
       <section className="min-h-[83vh] py-5 md:py-10">
@@ -41,32 +57,18 @@ export default async function Home() {
         </h2>
 
         <div className="flex w-full flex-col gap-5 md:flex-row">
-          {/* <Search />
-          <CategoryFilter /> */}
+          <Search />
+          <CategoryFilter categories={categories} />
         </div>
-        <div className="">
-          {events.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {events.map((event) => (
-                <div
-                  key={event._id}
-                  className="flex flex-col gap-3 rounded-lg border p-4"
-                >
-                  <h3 className="h3-bold">{event.title}</h3>
-                  <p className="p-regular-16">{event.description}</p>
-                  <Link
-                    href={`/events/${event._id}`}
-                    className="text-blue-500 hover:underline"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No events found.</p>
-          )}
-        </div>
+        <EventCollection
+          data={data}
+          emptyTitle="No events found"
+          collectionStateSubtext="try to come later"
+          collectionEventType="All_Events"
+          limit={6}
+          page={1}
+          totalPages={totalPages}
+        />
       </section>
       <div />
     </>
