@@ -65,6 +65,7 @@ export const getEvents = async ({
   category?: string;
 }) => {
   await connectToDatabase();
+  console.log("events rendered");
 
   const categoryDoc = category ? await getCategoryByName(category) : null;
 

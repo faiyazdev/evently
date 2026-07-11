@@ -21,7 +21,7 @@ export const createCategory = async ({
 export const getCategories = async (): Promise<CategoryDto[] | null> => {
   try {
     await connectToDatabase();
-
+    console.log("categories rendered");
     const categories = await Category.find().lean();
     if (!categories) return null;
     return categories.map(toCategoryDto);
