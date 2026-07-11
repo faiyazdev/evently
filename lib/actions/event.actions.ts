@@ -7,6 +7,7 @@ import { EventDto, toEventDto } from "../dto/event.dto";
 import Event, { EventType, IEvent } from "../db/models/event.model";
 import Category, { CategoryType } from "../db/models/category.model";
 import { QueryFilter } from "mongoose";
+import { unstable_cache } from "next/cache";
 
 export const createEvent = async ({
   userId,
@@ -53,61 +54,67 @@ const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: "i" } });
 };
 
-export const getEvents = async ({
-  limit = 6,
-  page,
-  query,
-  category,
-}: {
-  limit?: number;
-  page: number;
-  query?: string;
-  category?: string;
-}) => {
-  await connectToDatabase();
-  console.log("events rendered");
+export const getEvents = unstable_cache(
+  async ({
+    limit = 6,
+    page,
+    query,
+    category,
+  }: {
+    limit?: number;
+    page: number;
+    query?: string;
+    category?: string;
+  }) => {
+    await connectToDatabase();
+    console.count("events rendered");
+    const categoryDoc = category ? await getCategoryByName(category) : null;
 
-  const categoryDoc = category ? await getCategoryByName(category) : null;
+    if (category && !categoryDoc) {
+      return {
+        data: [],
+        totalPages: 0,
+      };
+    }
 
-  if (category && !categoryDoc) {
+    const filter: QueryFilter<EventType> = {};
+
+    if (query) {
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      filter.title = {
+        $regex: escaped,
+        $options: "i",
+      };
+    }
+
+    if (categoryDoc) {
+      filter.category = categoryDoc._id;
+    }
+
+    const [events, total] = await Promise.all([
+      Event.find(filter)
+        .populate<{ organizer: UserType }>("organizer")
+        .populate<{ category: CategoryType }>("category")
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+
+      Event.countDocuments(filter),
+    ]);
+
     return {
-      data: [],
-      totalPages: 0,
+      data: events.map(toEventDto),
+      totalPages: Math.ceil(total / limit),
     };
-  }
-
-  const filter: QueryFilter<EventType> = {};
-
-  if (query) {
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    filter.title = {
-      $regex: escaped,
-      $options: "i",
-    };
-  }
-
-  if (categoryDoc) {
-    filter.category = categoryDoc._id;
-  }
-
-  const [events, total] = await Promise.all([
-    Event.find(filter)
-      .populate<{ organizer: UserType }>("organizer")
-      .populate<{ category: CategoryType }>("category")
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean(),
-
-    Event.countDocuments(filter),
-  ]);
-
-  return {
-    data: events.map(toEventDto),
-    totalPages: Math.ceil(total / limit),
-  };
-};
+  },
+  ["events"],
+  {
+    tags: ["events"],
+    revalidate: 3600,
+  },
+);
 
 export const getEventById = async (id: string): Promise<EventDto | null> => {
   try {
